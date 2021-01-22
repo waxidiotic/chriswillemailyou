@@ -1,0 +1,26 @@
+:root {
+  --header-footer-height: 64px;
+  --layout-padding: 0 50px;
+}
+
+.layout {
+  padding: var(--layout-padding);
+}
+
+.header,
+.footer {
+  height: var(--header-footer-height);
+  line-height: 64px;
+}
+
+.header {
+  text-align: right;
+}
+
+.content {
+  width: 100%;
+
+  > div:not(:last-child) {
+    margin-bottom: 16px;
+  }
+}
