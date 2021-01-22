@@ -12,24 +12,6 @@ interface AppProps {
 }
 
 function App({ sb }: AppProps) {
-  // Create the count state.
-  const [count, setCount] = useState(0);
-  // Create the counter (+1 every second).
-  useEffect(() => {
-    const timer = setTimeout(() => setCount(count + 1), 1000);
-    return () => clearTimeout(timer);
-  }, [count, setCount]);
-  // Return the App component.
-
-  useEffect(() => {
-    async function getData() {
-      const { data: people } = await sb.from('people').select('name');
-      console.log(people);
-    }
-
-    getData();
-  }, []);
-
   return (
     <div className={css.layout}>
       <div className={css.header}>
@@ -37,7 +19,7 @@ function App({ sb }: AppProps) {
       </div>
       <div className={css.content}>
         <TableControls />
-        <Table />
+        <Table sb={sb} />
       </div>
       <div className={css.footer}>Footer</div>
     </div>
