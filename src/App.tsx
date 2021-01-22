@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Button } from 'antd';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
-interface AppProps {}
+interface AppProps {
+  sb: SupabaseClient;
+}
 
-function App({}: AppProps) {
+function App({ sb }: AppProps) {
   // Create the count state.
   const [count, setCount] = useState(0);
   // Create the counter (+1 every second).
@@ -13,27 +15,19 @@ function App({}: AppProps) {
     return () => clearTimeout(timer);
   }, [count, setCount]);
   // Return the App component.
+
+  useEffect(() => {
+    async function getData() {
+      const { data: people } = await sb.from('people').select('name');
+      console.log(people);
+    }
+
+    getData();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <p>
-          Page has been open for <code>{count}</code> seconds.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </p>
-      </header>
+      <Button type="primary">Add</Button>
     </div>
   );
 }
