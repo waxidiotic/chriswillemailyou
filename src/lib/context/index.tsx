@@ -1,4 +1,5 @@
 import React from 'react';
+import { createClient } from '@supabase/supabase-js';
 import type { Session, SupabaseClient, User } from '@supabase/supabase-js';
 
 type SbUser = User | null;
@@ -7,30 +8,33 @@ type SbSession = Session | null;
 interface AuthSession {
   user: SbUser;
   session: SbSession;
+  sb: SupabaseClient;
 }
 
-const UserContext = React.createContext<AuthSession>({
+const supabaseUrl = 'https://sugzkgepgdkjitrzrpms.supabase.co';
+const supabaseKey = import.meta.env.SNOWPACK_PUBLIC_SUPABASE_KEY;
+export const supabase = createClient(supabaseUrl, supabaseKey);
+
+export const UserContext = React.createContext<AuthSession>({
   user: null,
   session: null,
+  sb: supabase,
 });
 
 interface UserContextProviderProps {
-  supabaseClient: SupabaseClient;
   children: any;
 }
 
-export const UserContextProvider = ({
-  supabaseClient,
-  ...props
-}: UserContextProviderProps) => {
+export const UserContextProvider = ({ ...props }: UserContextProviderProps) => {
   const [session, setSession] = React.useState<SbSession>(null);
   const [user, setUser] = React.useState<SbUser>(null);
+  const sb = supabase;
 
   React.useEffect(() => {
-    const session = supabaseClient.auth.session();
+    const session = supabase.auth.session();
     setSession(session);
     setUser(session?.user ?? null);
-    const { data: authListener } = supabaseClient.auth.onAuthStateChange(
+    const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
@@ -42,7 +46,7 @@ export const UserContextProvider = ({
     };
   }, []);
 
-  const value = { session, user };
+  const value = { session, user, sb };
 
   return (
     <UserContext.Provider value={value} {...props}>

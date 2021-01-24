@@ -9,11 +9,11 @@ import 'antd/dist/antd.css';
 
 const supabaseUrl = 'https://sugzkgepgdkjitrzrpms.supabase.co';
 const supabaseKey = import.meta.env.SNOWPACK_PUBLIC_SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 ReactDOM.render(
   <React.StrictMode>
-    <App sb={supabase} />
+    <App />
   </React.StrictMode>,
   document.getElementById('root'),
 );

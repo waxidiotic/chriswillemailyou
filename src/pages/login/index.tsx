@@ -1,9 +1,12 @@
 import React from 'react';
 import { Button, Card, Input, Space } from 'antd';
+import { UserContext } from '../../lib/context';
 
 export default function LoginPage() {
   const [emailAddress, setEmailAddress] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const { sb } = React.useContext(UserContext);
 
   const handleEmailInput = (e: React.FormEvent) =>
     setEmailAddress((e.target as HTMLInputElement).value);
@@ -11,12 +14,28 @@ export default function LoginPage() {
   const handlePasswordInput = (e: React.FormEvent) =>
     setPassword((e.target as HTMLInputElement).value);
 
-  const handleLogin = () => {
-    // create useSupabase hook than login
+  const handleLogin = async () => {
+    setIsLoading(true);
+    try {
+      await sb.auth.signIn({
+        email: emailAddress,
+        password,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+    setIsLoading(false);
   };
 
-  const handleRegister = () => {
-    // create useSupabase hook than register
+  const handleRegister = async () => {
+    try {
+      await sb.auth.signUp({
+        email: emailAddress,
+        password,
+      });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -41,7 +60,7 @@ export default function LoginPage() {
             />
           </div>
           <Space>
-            <Button type="primary" onClick={handleLogin}>
+            <Button type="primary" loading={isLoading} onClick={handleLogin}>
               Login
             </Button>
             <Button onClick={handleRegister}>Register</Button>
