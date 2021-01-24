@@ -1,15 +1,10 @@
 import React from 'react';
-
+import { useSession } from './lib/hooks';
 import LoginPage from './pages/login';
 
-import { UserContextProvider } from './lib/context';
-
 function App() {
-  return (
-    <UserContextProvider>
-      <LoginPage />
-    </UserContextProvider>
-  );
+  const session = useSession();
+  return session?.user ? <div>LoggedIn</div> : <LoginPage />;
 }
 
 export default App;

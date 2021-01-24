@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Card, Input, Space } from 'antd';
-import { UserContext } from '../../lib/context';
+import { useSupabase } from '../../lib/hooks';
 import type { AuthType, Credentials } from './types';
 
 export default function LoginPage() {
@@ -8,7 +8,7 @@ export default function LoginPage() {
   const [password, setPassword] = React.useState<string>('');
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [authMethod, setAuthMethod] = React.useState<AuthType>('PASSWORD');
-  const { sb } = React.useContext(UserContext);
+  const { auth } = useSupabase();
 
   const handleEmailInput = (e: React.FormEvent) =>
     setEmailAddress((e.target as HTMLInputElement).value);
@@ -23,7 +23,7 @@ export default function LoginPage() {
       credentials.password = password;
     }
     try {
-      await sb.auth.signIn(credentials);
+      await auth.signIn(credentials);
     } catch (e) {
       console.error(e);
     }
@@ -36,7 +36,7 @@ export default function LoginPage() {
       return;
     }
     try {
-      await sb.auth.signUp({
+      await auth.signUp({
         email: emailAddress,
         password,
       });
