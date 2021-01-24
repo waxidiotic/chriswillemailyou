@@ -27,7 +27,6 @@ export default function LoginPage() {
     } catch (e) {
       console.error(e);
     }
-    setIsLoading(false);
   };
 
   const handleRegister = async () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table as AntTable } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { useSupabase } from '../../lib/hooks';
 
 interface Check {
   key: string; // uuid
@@ -40,14 +40,15 @@ const columns: ColumnsType<Check> = [
   },
 ];
 
-export default function Table({ sb }: { sb: SupabaseClient }) {
+export default function Table() {
   const [data, setData] = React.useState<Check[]>([]);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const supabase = useSupabase();
 
   React.useEffect(() => {
     async function fetchChecks() {
       setIsLoading(true);
-      const { data: checks } = await sb.from('checks').select('*');
+      const { data: checks } = await supabase.from('checks').select('*');
 
       if (checks) {
         const mappedData = checks.map((check) => {
