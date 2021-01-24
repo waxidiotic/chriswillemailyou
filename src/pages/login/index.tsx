@@ -1,11 +1,13 @@
 import React from 'react';
 import { Button, Card, Input, Space } from 'antd';
 import { UserContext } from '../../lib/context';
+import type { AuthType, Credentials } from './types';
 
 export default function LoginPage() {
   const [emailAddress, setEmailAddress] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [authMethod, setAuthMethod] = React.useState<AuthType>('PASSWORD');
   const { sb } = React.useContext(UserContext);
 
   const handleEmailInput = (e: React.FormEvent) =>
@@ -16,11 +18,12 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     setIsLoading(true);
+    const credentials: Credentials = { email: emailAddress };
+    if (authMethod === 'PASSWORD') {
+      credentials.password = password;
+    }
     try {
-      await sb.auth.signIn({
-        email: emailAddress,
-        password,
-      });
+      await sb.auth.signIn(credentials);
     } catch (e) {
       console.error(e);
     }
@@ -28,6 +31,10 @@ export default function LoginPage() {
   };
 
   const handleRegister = async () => {
+    if (authMethod === 'MAGIC_LINK') {
+      setAuthMethod('PASSWORD');
+      return;
+    }
     try {
       await sb.auth.signUp({
         email: emailAddress,
@@ -36,6 +43,11 @@ export default function LoginPage() {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const handleMagicLinkToggle = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthMethod(authMethod === 'PASSWORD' ? 'MAGIC_LINK' : 'PASSWORD');
   };
 
   return (
@@ -51,20 +63,29 @@ export default function LoginPage() {
               onChange={handleEmailInput}
             />
           </div>
-          <div>
-            <h4>Password</h4>
-            <Input.Password
-              id="password"
-              value={password}
-              onChange={handlePasswordInput}
-            />
-          </div>
+          {authMethod === 'PASSWORD' ? (
+            <div>
+              <h4>Password</h4>
+              <Input.Password
+                id="password"
+                value={password}
+                onChange={handlePasswordInput}
+              />
+            </div>
+          ) : null}
           <Space>
             <Button type="primary" loading={isLoading} onClick={handleLogin}>
-              Login
+              {authMethod === 'PASSWORD' ? 'Login' : 'Request Magic Link'}
             </Button>
             <Button onClick={handleRegister}>Register</Button>
           </Space>
+          <span>
+            <a href="#" onClick={handleMagicLinkToggle}>
+              {authMethod === 'PASSWORD'
+                ? 'Request a magic link instead'
+                : 'Use your password instead'}
+            </a>
+          </span>
         </Space>
       </Card>
     </div>
