@@ -1,7 +1,13 @@
 import React from 'react';
-import { createClient, Session, SupabaseClient } from '@supabase/supabase-js';
+import {
+  createClient,
+  Session,
+  User,
+  SupabaseClient,
+} from '@supabase/supabase-js';
 
 type SbSession = Session | null;
+type SbUser = User | null;
 
 const supabaseUrl = 'https://sugzkgepgdkjitrzrpms.supabase.co';
 const supabaseKey = import.meta.env.SNOWPACK_PUBLIC_SUPABASE_KEY;
@@ -27,6 +33,17 @@ const useSession = () => {
   return session;
 };
 
+const useUser = () => {
+  const [user, setUser] = React.useState<SbUser>(null);
+
+  React.useMemo(() => {
+    const _user = supabase.auth.user();
+    setUser(_user);
+  }, []);
+
+  return user;
+};
+
 const useSupabase = () => supabase;
 
-export { useSession, useSupabase };
+export { useSession, useUser, useSupabase };

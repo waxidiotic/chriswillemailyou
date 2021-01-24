@@ -2,12 +2,13 @@ import React from 'react';
 import { Button, Space } from 'antd';
 import { Table } from '../../components/table';
 import { TableControls } from '../../components/table-controls';
-import { useSupabase } from '../../lib/hooks';
+import { useSupabase, useUser } from '../../lib/hooks';
 
 import css from './style.module.scss';
 
 function HomePage() {
   const supabase = useSupabase();
+  const user = useUser();
 
   const handleSignOut = async () => {
     try {
@@ -21,7 +22,7 @@ function HomePage() {
     <div className={css.layout}>
       <div className={css.header}>
         <Space>
-          You are logged in as <b>Alex Bussey</b>
+          You are logged in as <b>{user?.email}</b>
           <Button type="link" onClick={handleSignOut}>
             Sign Out
           </Button>
